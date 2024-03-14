@@ -1,5 +1,6 @@
 import cv2
 import pathlib
+from deepface import DeepFace
 
 facefile = pathlib.Path(cv2.__file__).parent.absolute() / "data/haarcascade_frontalface_default.xml"
 
@@ -20,7 +21,12 @@ while(True):
         x_new = max(0, x - (new_width - width) // 2)
         y_new = max(0, y - (new_height - height) // 2)
         cropped_frame = frame[y_new:y_new + new_height, x_new:x_new + new_width]
-        cv2.imshow("Cropped Last Frame", cropped_frame)
+        cropped_frame_grey_scale = cv2.cvtColor(cropped_frame,cv2.COLOR_BGR2GRAY)
+        cv2.imwrite("img.jpg",cropped_frame)
+        img = cv2.imread("img.jpg")
+        result = DeepFace.analyze(img, actions=["emotion"])
+        print(result)
+        cv2.imshow("Cropped Last Frame", cropped_frame_grey_scale)
     for(x,y,width,height) in faces:
         cv2.rectangle(frame,(x,y),(x+width,y+height),(0,255,0),2)
     cv2.imshow("Faces",frame)
